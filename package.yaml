@@ -1,0 +1,48 @@
+name:                HaLucene-basic
+version:             0.1.0.0
+github:              "Zeelize/HaLucene-basic"
+license:             BSD3
+author:              "Vojtech Mraz"
+maintainer:          "mraz.vojta@gmail.com"
+copyright:           "2018 Vojtech Mraz"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on Github at <https://github.com/Zeelize/HaLucene-basic#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+
+executables:
+  HaLucene-basic-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - HaLucene-basic
+
+tests:
+  HaLucene-basic-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - HaLucene-basic
