@@ -21,6 +21,10 @@ description:         Please see the README on Github at <https://github.com/Zeel
 
 dependencies:
 - base >= 4.7 && < 5
+- containers
+- split
+- list-extras
+- hspec
 
 library:
   source-dirs: src
