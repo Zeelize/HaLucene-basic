@@ -1,5 +1,5 @@
 {-|
-Module      : StopWords
+Module      : English StopWords
 Description : List of all English stopwords
 Copyright   : (c) Vojtěch Mráz, 2018
 License     : MIT
@@ -9,14 +9,10 @@ Portability : POSIX
 
 List of stopwords taken from https://gist.github.com/sebleier/554280
 -}
-module English.StopWords where
+module StopWords.English where
 
 import qualified Data.Set as S
 import qualified Data.Text as T
-
--- | Check if given word is a stop word
-checkStopWord :: T.Text -> Bool
-checkStopWord word = S.member word stopWords
 
 -- | Set of all english stopwords
 stopWords :: S.Set T.Text
