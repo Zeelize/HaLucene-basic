@@ -40,9 +40,13 @@ prob w = (fromIntegral $ fromMaybe 0 (M.lookup w ws :: Maybe Int)) / n
         --n = fromIntegral $ M.size ws 
         n = fromIntegral $ M.foldl' (+) 0 ws 
 
--- | Find the best possible candidate from all canditates for word
+-- | Split the string query into words and those words seperately correct
 spell :: String -> String
-spell w = argmax prob $ candidates w
+spell w = unwords [(correction word) | word <- (words w)]
+
+-- | Find the best possible candidate from all canditates for word
+correction :: String -> String
+correction w = argmax prob $ candidates w
 
 -- | Find all candidates for given word
 candidates :: String -> [String]
