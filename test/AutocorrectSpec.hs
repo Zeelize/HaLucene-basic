@@ -39,4 +39,12 @@ spec = do
             spell "paaperwokr" `shouldBe` "paperwork"
             spell "permissont" `shouldBe` "permission"
             spell "replacamen" `shouldBe` "replacement"
+    describe "Correction of queries" $ do
+        it "combination of mistakes and no mistakes in user queries" $ do
+            spell "whitr fridfe" `shouldBe` "white fridge"
+            spell "yelow car" `shouldBe` "yellow car"
+            spell "smal telefone" `shouldBe` "small telephone"
+            spell "electric kay" `shouldBe` "electric key"
+            spell "haskell autocorect" `shouldBe` "haskell autocorect"
+            spell "peper documens storega" `shouldBe` "paper document stores"
             
