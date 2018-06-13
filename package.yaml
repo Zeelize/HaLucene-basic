@@ -25,6 +25,7 @@ dependencies:
 - split
 - list-extras
 - hspec
+- text
 
 library:
   source-dirs: src

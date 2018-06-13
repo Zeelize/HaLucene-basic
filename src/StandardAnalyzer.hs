@@ -11,3 +11,15 @@ Standard Analyzer for proccesing texts provide deleting stop words such as (a, t
 Also stemming words (runing - run, economic - econom etc...)
 -}
 module StandardAnalyzer where
+
+import qualified Data.Text as T
+
+import qualified English.StopWords as SW
+
+-- | Transform all words into lower-case
+textToLower :: T.Text -> T.Text
+textToLower text = T.toLower text
+
+-- | Delete all stopwords from the text
+deleteStopWords :: T.Text -> T.Text
+deleteStopWords text = T.unwords [w | w <- (T.words text), (not . SW.checkStopWord) w] 
