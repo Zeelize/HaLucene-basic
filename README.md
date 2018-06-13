@@ -1,6 +1,8 @@
 # HaLucene-basic
 Basic implementation of core Lucene functions in Haskell. Will be extended over time.
 
+[![Build Status](https://travis-ci.com/Zeelize/HaLucene-basic.svg?token=1i9swdUXVgvPsqEuiqDd&branch=master)](https://travis-ci.com/Zeelize/HaLucene-basic)
+
 ## Description
 
 HaLucene-basic project is divided into two parts. 
