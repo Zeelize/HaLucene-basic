@@ -29,11 +29,11 @@ import qualified StopWords.English as ESW
 -- c) deleting stopwords
 -- d) stemm the text
 analyze :: T.Text -> T.Text
-analyze text = stemText swProcessed
-    where 
-        filtered = T.filter (not . (`elem` ",.?!-:;\"\'")) text
-        lowered = T.toLower filtered
-        swProcessed = deleteStopWords lowered
+analyze text = stemText . deleteStopWords . T.toLower . erasePunc $ text
+
+-- | Erase punctuation from text
+erasePunc :: T.Text -> T.Text
+erasePunc text = T.filter (not . (`elem` ",.?!-:;\"\'")) text
 
 -- | Check if given word is a stop word
 checkStopWord :: T.Text -> Bool
@@ -48,7 +48,7 @@ stemText :: T.Text -> T.Text
 stemText text = T.unwords [stem w | w <- (T.words text)]
 
 -- | Porter Stemming (more info in module description)
--- code was taken from https://tartarus.org/martin/PorterStemmer/ 
+-- below code was taken from https://tartarus.org/martin/PorterStemmer/ 
 stem :: T.Text -> T.Text
 stem w
     | T.length w < 3 = w
