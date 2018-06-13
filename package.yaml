@@ -24,6 +24,7 @@ dependencies:
 - containers
 - split
 - list-extras
+- hspec
 
 library:
   source-dirs: src
