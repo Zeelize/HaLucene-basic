@@ -104,5 +104,5 @@ storeTermsIndex (x:xs) fp = do
 storeDocsIndex :: [(Int, (T.Text, Int))] -> FilePath -> IO ()
 storeDocsIndex [] _ = return ()
 storeDocsIndex (x:xs) fp = do
-    appendFile fp $ show (fst x) ++ "-" ++ T.unpack (fst (snd x)) ++ show (snd (snd x)) ++ ";" ++ "\n"
+    appendFile fp $ show (fst x) ++ "-" ++ T.unpack (fst (snd x)) ++ "," ++ show (snd (snd x)) ++ ";" ++ "\n"
     storeDocsIndex xs fp
