@@ -28,6 +28,14 @@ Example of inverted index for document [Red Dwarf] with text [Hello, welcome on 
     Docs:
         1-red dwarf,5;
         2-hello word,2;
+
+EDIT #1: Terms Index is storing only ids of documents in which they occur:
+    Terms:
+        hello-1;2;
+        welcome-1;
+        red-1;
+        dwarf-1;
+        world-2;
 -}
 module IndexWriter where
 

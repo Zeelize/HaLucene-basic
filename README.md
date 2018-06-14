@@ -22,7 +22,7 @@ Both parts and their parts are specified in __Tasks__ section.
         * Basic stemmer
     * IndexWriter
         * Indexing of documents/terms
-        * tf-idf calculations and storing
+        * tf-idf calculations and storing (!!! NOT IMPLEMENTED - it is storing only terms and DOC where)
     * IndexSearcher
         * Word/Query searcher in already prepared indexed documents.
         * Returning relevant documents
