@@ -84,5 +84,11 @@ searcher q (x:xs) tdm
         ntdm = proccessDocLine tdm (T.splitOn (T.pack ";") docs)
         -- It will proccess line with docs and add them to do 
         proccessDocLine :: TermsDocsMap -> [T.Text] -> TermsDocsMap
-        proccessDocLine tdm line = tdm
+        proccessDocLine tdm [] = tdm
+        proccessDocLine tdm (x:xs) = proccessDocLine ntdm xs
+            where
+                docId = read $ T.unpack x :: Int
+                ntdm = case M.member docId tdm of
+                    True -> M.adjust (+ 1) docId tdm 
+                    _ -> M.insert docId 1 tdm
     
