@@ -54,13 +54,16 @@ import qualified StandardAnalyzer as SA
 type TermsDocsMap = M.Map Int Int
 
 -- | Find top N relevant documents for the user query and indexes on given path
-findRelevantDocs :: Int -> String -> FilePath -> FilePath -> [T.Text]
+findRelevantDocs :: Int -> String -> FilePath -> FilePath -> [(Double, T.Text)]
 findRelevantDocs n query ifp dfp = do
     -- analyze user query
     let analQ = SA.analyze (T.pack query)
+    -- getting relevant docs with tf
     let relDoc = preSearch analQ ifp
-    -- sort map and return top N 
-    []
+    -- merge relevant docs with docs index
+    let docList = mergeDocs dfp relDoc
+    -- sort list and return top N 
+    docList
 
 -- | Pre-proccess for index searcher
 preSearch :: T.Text -> FilePath -> TermsDocsMap
@@ -81,14 +84,40 @@ searcher q (x:xs) tdm
         term = head splitted 
         docs = head . tail $ splitted
         nq = S.delete term q
-        ntdm = proccessDocLine tdm (T.splitOn (T.pack ";") docs)
+        ntdm = proccessTermLine tdm (T.splitOn (T.pack ";") docs)
         -- It will proccess line with docs and add them to do 
-        proccessDocLine :: TermsDocsMap -> [T.Text] -> TermsDocsMap
-        proccessDocLine tdm [] = tdm
-        proccessDocLine tdm (x:xs) = proccessDocLine ntdm xs
+        proccessTermLine :: TermsDocsMap -> [T.Text] -> TermsDocsMap
+        proccessTermLine tdm [] = tdm
+        proccessTermLine tdm (x:xs) = proccessTermLine ntdm xs
             where
                 docId = read $ T.unpack x :: Int
                 ntdm = case M.member docId tdm of
                     True -> M.adjust (+ 1) docId tdm 
                     _ -> M.insert docId 1 tdm
-    
+
+-- | Merge relevant documents according to user query with docs index
+mergeDocs :: FilePath -> TermsDocsMap -> [(Double, T.Text)]
+mergeDocs dfp tdm = docMerger tdm di []
+    where
+        di = T.lines . T.pack . unsafePerformIO $ readFile dfp
+
+-- | If document is relevant save it to final relevant documents
+docMerger :: TermsDocsMap -> [T.Text] -> [(Double, T.Text)] -> [(Double, T.Text)]
+docMerger _ [] relD = relD
+docMerger tdm (x:xs) relD 
+    | M.null tdm = relD
+    | otherwise = case M.lookup docId tdm of
+        Just tf -> docMerger ntdm xs (proccesDocLine relD (T.splitOn (T.pack ",") rest) tf)
+        _ -> docMerger tdm xs relD
+    where 
+        splitted = T.splitOn (T.pack "-") x 
+        docId = read . T.unpack . head $ splitted :: Int
+        rest = head . tail $ splitted
+        ntdm = M.delete docId tdm
+        --nrelD = proccesDocLine relD (T.splitOn (T.pack ",") rest) tf
+        -- It will add new relevant document to the final list with computed weight
+        proccesDocLine :: [(Double, T.Text)] -> [T.Text] -> Int -> [(Double, T.Text)]
+        proccesDocLine d [x, y] tf = d ++ [(weight, x)]
+            where 
+                len = read $ T.unpack y :: Int
+                weight = (fromIntegral tf) / (fromIntegral len)
