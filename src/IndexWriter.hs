@@ -58,7 +58,7 @@ writeIndex docs tifp difp = do
     let (ti, di) = procDocuments docs M.empty M.empty 0
     -- Write maps into a files
     scoreTI <- storeTermsIndex (M.toList ti) tifp
-    --scoreDI <- storeDocsIndex (M.toList di) difp
+    scoreDI <- storeDocsIndex (M.toList di) difp
     return ()
 
 -- | Create index and stores it into maps for documents
@@ -93,7 +93,7 @@ addTerm docId ti (x:xs) = addTerm docId nti xs
 storeTermsIndex :: [(T.Text, [Int])] -> FilePath -> IO ()
 storeTermsIndex [] _ = return ()
 storeTermsIndex (x:xs) fp = do
-    appendFile fp $ T.unpack (fst x) ++ "-" ++ indexToString (snd x)
+    appendFile fp $ T.unpack (fst x) ++ "-" ++ indexToString (snd x) ++ "\n"
     storeTermsIndex xs fp
     where
         indexToString :: [Int] -> String
@@ -101,4 +101,8 @@ storeTermsIndex (x:xs) fp = do
         indexToString (d:dr) = show d ++ ";" ++ indexToString dr 
 
 -- | Store DocsIndex map into file
---storeDocsIndex :: [(Int, (T.Text, Int))] -> FilePath -> IO ()
+storeDocsIndex :: [(Int, (T.Text, Int))] -> FilePath -> IO ()
+storeDocsIndex [] _ = return ()
+storeDocsIndex (x:xs) fp = do
+    appendFile fp $ show (fst x) ++ "-" ++ T.unpack (fst (snd x)) ++ show (snd (snd x)) ++ ";" ++ "\n"
+    storeDocsIndex xs fp
