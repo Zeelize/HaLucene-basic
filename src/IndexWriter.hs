@@ -46,7 +46,7 @@ import qualified Data.Text as T
 import qualified StandardAnalyzer as SA
 
 -- | Map of terms with key of text and value of docId and tf in doc
-type TermsIndex = M.Map T.Text (Int, Int)
+type TermsIndex = M.Map T.Text [Int]
 
 -- | Map of docs with key of docId and value pair of name and length
 type DocsIndex = M.Map Int (T.Text, Int)
@@ -74,4 +74,17 @@ addDoc i name n di = M.insert i (name, n) di
 
 -- | Add terms into termsMap
 addTerms :: Int -> TermsIndex -> T.Text -> TermsIndex
-addTerms docId ti text = ti
+addTerms docId ti text = addTerm docId ti tList
+    where 
+        tList = nub . T.words $ text
+
+-- | Add one specific term to term map
+addTerm :: Int -> TermsIndex -> [T.Text] -> TermsIndex
+addTerm _ ti [] = ti
+addTerm docId ti (x:xs) = addTerm docId nti xs
+    where 
+        nti = case M.member x ti of
+            True -> M.adjust (++ [docId]) x ti 
+            _ -> M.insert x [docId] ti
+             
+    
