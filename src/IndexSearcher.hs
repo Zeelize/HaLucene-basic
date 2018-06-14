@@ -63,7 +63,7 @@ findRelevantDocs n query ifp dfp = do
     -- merge relevant docs with docs index
     let docList = mergeDocs dfp relDoc
     -- sort list and return top N 
-    docList
+    reverse $ drop ((length docList) - n) $ sortOn fst docList
 
 -- | Pre-proccess for index searcher
 preSearch :: T.Text -> FilePath -> TermsDocsMap
@@ -114,7 +114,6 @@ docMerger tdm (x:xs) relD
         docId = read . T.unpack . head $ splitted :: Int
         rest = head . tail $ splitted
         ntdm = M.delete docId tdm
-        --nrelD = proccesDocLine relD (T.splitOn (T.pack ",") rest) tf
         -- It will add new relevant document to the final list with computed weight
         proccesDocLine :: [(Double, T.Text)] -> [T.Text] -> Int -> [(Double, T.Text)]
         proccesDocLine d [x, y] tf = d ++ [(weight, x)]
