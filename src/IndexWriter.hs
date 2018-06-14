@@ -53,10 +53,12 @@ type DocsIndex = M.Map Int (T.Text, Int)
 
 -- | Main function to call for creating indexes
 -- input is list of documents -> pair of name and content
-writeIndex :: [(T.Text, T.Text)] -> IO ()
-writeIndex docs = do
+writeIndex :: [(T.Text, T.Text)] -> FilePath -> FilePath -> IO ()
+writeIndex docs tifp difp = do
     let (ti, di) = procDocuments docs M.empty M.empty 0
     -- Write maps into a files
+    scoreTI <- storeTermsIndex (M.toList ti) tifp
+    --scoreDI <- storeDocsIndex (M.toList di) difp
     return ()
 
 -- | Create index and stores it into maps for documents
@@ -87,4 +89,16 @@ addTerm docId ti (x:xs) = addTerm docId nti xs
             True -> M.adjust (++ [docId]) x ti 
             _ -> M.insert x [docId] ti
              
-    
+-- | Store TermsIndex map into file
+storeTermsIndex :: [(T.Text, [Int])] -> FilePath -> IO ()
+storeTermsIndex [] _ = return ()
+storeTermsIndex (x:xs) fp = do
+    appendFile fp $ T.unpack (fst x) ++ "-" ++ indexToString (snd x)
+    storeTermsIndex xs fp
+    where
+        indexToString :: [Int] -> String
+        indexToString [d] = show d
+        indexToString (d:dr) = show d ++ ";" ++ indexToString dr 
+
+-- | Store DocsIndex map into file
+--storeDocsIndex :: [(Int, (T.Text, Int))] -> FilePath -> IO ()

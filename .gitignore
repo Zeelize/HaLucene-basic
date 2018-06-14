@@ -19,6 +19,9 @@ cabal.sandbox.config
 cabal.project.local
 .HTF/
 
+# Indexes
+*.pidx
+
 # IDE and temps
 .idea/
 .vscode/
