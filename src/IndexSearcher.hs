@@ -115,7 +115,9 @@ docMerger tdm (x:xs) relD
         ntdm = M.delete docId tdm
         -- It will add new relevant document to the final list with computed weight
         proccesDocLine :: [(Double, T.Text)] -> [T.Text] -> Int -> [(Double, T.Text)]
-        proccesDocLine d [x, y] tf = d ++ [(weight, x)]
+        --proccesDocLine [] _ _ = []
+        proccesDocLine d [] _ = d
+        proccesDocLine d [x,y] tf = d ++ [(weight, x)]
             where 
                 len = read $ T.unpack y :: Int
                 weight = (fromIntegral tf) / (fromIntegral len)

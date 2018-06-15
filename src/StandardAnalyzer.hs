@@ -33,7 +33,7 @@ analyze text = stemText . deleteStopWords . T.toLower . erasePunc $ text
 
 -- | Erase punctuation from text
 erasePunc :: T.Text -> T.Text
-erasePunc text = T.filter (not . (`elem` ",.?!-:;\"\'")) text
+erasePunc text = T.filter (not . (`elem` ",.?!-:;\"\'()#%+$@&/")) text
 
 -- | Check if given word is a stop word
 checkStopWord :: T.Text -> Bool

@@ -29,7 +29,7 @@ main :: IO ()
 main = do
     -- if not created index, load csv and create one
     -- DISCLAIMER!: we are only checking for terms.pidx, of course only for example purposes
-    index <- doesFileExist "terms.pidx"
+    index <- doesFileExist "app/terms.pidx"
     when (not index) (createIndexes)
     -- ask for user query in loop and return relevant docs
     putStrLn "Welcome to search engine for Home-Depot products."
@@ -39,13 +39,13 @@ main = do
 -- Communicator with user
 communicator :: IO ()
 communicator = do
-    putStr "Search: "
+    putStrLn "\nSearch: "
     query <- getLine
     case query == ":quit" of
         True -> putStrLn "Thank you for using Home-depot search engine."
         _ -> do
             -- search query
-            rl <- findRelevantDocs 5 query "terms.pidx" "docs.pidx"
+            putStrLn . show . unsafePerformIO $ findRelevantDocs 5 query "app/terms.pidx" "app/docs.pidx"
             -- run communicator again
             communicator
 
@@ -53,9 +53,9 @@ communicator = do
 createIndexes :: IO ()
 createIndexes = do
     -- Load data
-    let products = loadCSVFile "home_depot.csv"
+    let products = loadCSVFile "app/home_depot.csv"
     -- create index if not exists
-    writeIndex products "terms.pidx" "docs.pidx"
+    writeIndex products "app/terms.pidx" "app/docs.pidx"
 
 -- Load CSV file with products
 loadCSVFile :: FilePath -> [(T.Text, T.Text)]
