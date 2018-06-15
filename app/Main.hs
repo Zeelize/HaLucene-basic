@@ -15,6 +15,8 @@ their descriptions and user query.
 module Main where
 
 import System.IO.Unsafe
+import Control.Monad
+import System.Directory
 
 import qualified Data.Text as T
 
@@ -25,11 +27,35 @@ import IndexWriter (writeIndex)
 -- First we load our data - create Index - and for user query find relevant documents
 main :: IO ()
 main = do
+    -- if not created index, load csv and create one
+    -- DISCLAIMER!: we are only checking for terms.pidx, of course only for example purposes
+    index <- doesFileExist "terms.pidx"
+    when (not index) (createIndexes)
+    -- ask for user query in loop and return relevant docs
+    putStrLn "Welcome to search engine for Home-Depot products."
+    putStrLn "[HELP]: if you want to quit searching, write \":quit\" instead of your search query!"
+    communicator
+
+-- Communicator with user
+communicator :: IO ()
+communicator = do
+    putStr "Search: "
+    query <- getLine
+    case query == ":quit" of
+        True -> putStrLn "Thank you for using Home-depot search engine."
+        _ -> do
+            -- search query
+            rl <- findRelevantDocs 5 query "terms.pidx" "docs.pidx"
+            -- run communicator again
+            communicator
+
+-- Load CSV File and create index
+createIndexes :: IO ()
+createIndexes = do
     -- Load data
     let products = loadCSVFile "home_depot.csv"
     -- create index if not exists
-    -- ask for user query in loop and return relevant docs
-    putStrLn "HaLucene example..."
+    writeIndex products "terms.pidx" "docs.pidx"
 
 -- Load CSV file with products
 loadCSVFile :: FilePath -> [(T.Text, T.Text)]
