@@ -51,7 +51,7 @@ import qualified StandardAnalyzer as SA
 type TermsDocsMap = M.Map Int Int
 
 -- | Find top N relevant documents for the user query and indexes on given path
-findRelevantDocs :: Int -> String -> FilePath -> FilePath -> [(Double, T.Text)]
+findRelevantDocs :: Int -> String -> FilePath -> FilePath -> IO ([(Double, T.Text)])
 findRelevantDocs n query ifp dfp = do
     -- analyze user query
     let analQ = SA.analyze (T.pack query)
@@ -60,7 +60,7 @@ findRelevantDocs n query ifp dfp = do
     -- merge relevant docs with docs index
     let docList = mergeDocs dfp relDoc
     -- sort list and return top N 
-    reverse $ drop ((length docList) - n) $ sortOn fst docList
+    return (reverse $ drop ((length docList) - n) $ sortOn fst docList)
 
 -- | Pre-proccess for index searcher
 preSearch :: T.Text -> FilePath -> TermsDocsMap
