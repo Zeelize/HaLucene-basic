@@ -28,14 +28,6 @@ Example of inverted index for document [Red Dwarf] with text [Hello, welcome on 
     Docs:
         1-red dwarf,5;
         2-hello word,2;
-
-EDIT #1: Terms Index is storing only ids of documents in which they occur:
-    Terms:
-        hello-1;2;
-        welcome-1;
-        red-1;
-        dwarf-1;
-        world-2;
 -}
 module IndexWriter where
 
@@ -46,7 +38,7 @@ import qualified Data.Text as T
 import qualified StandardAnalyzer as SA
 
 -- | Map of terms with key of text and value of docId and tf in doc
-type TermsIndex = M.Map T.Text [Int]
+type TermsIndex = M.Map T.Text [(Int, Int)]
 
 -- | Map of docs with key of docId and value pair of name and length
 type DocsIndex = M.Map Int (T.Text, Int)
@@ -78,27 +70,28 @@ addDoc i name n di = M.insert i (name, n) di
 addTerms :: Int -> TermsIndex -> T.Text -> TermsIndex
 addTerms docId ti text = addTerm docId ti tList
     where 
-        tList = nub . T.words $ text
+        tList = map (\xs -> (head xs, length xs)) . group . sort . T.words $ text
+        --tList = nub . T.words $ text
 
 -- | Add one specific term to term map
-addTerm :: Int -> TermsIndex -> [T.Text] -> TermsIndex
+addTerm :: Int -> TermsIndex -> [(T.Text, Int)] -> TermsIndex
 addTerm _ ti [] = ti
-addTerm docId ti (x:xs) = addTerm docId nti xs
+addTerm docId ti ((x, y):xs) = addTerm docId nti xs
     where 
         nti = case M.member x ti of
-            True -> M.adjust (++ [docId]) x ti 
-            _ -> M.insert x [docId] ti
+            True -> M.adjust (++ [(docId, y)]) x ti 
+            _ -> M.insert x [(docId, y)] ti
              
 -- | Store TermsIndex map into file
-storeTermsIndex :: [(T.Text, [Int])] -> FilePath -> IO ()
+storeTermsIndex :: [(T.Text, [(Int, Int)])] -> FilePath -> IO ()
 storeTermsIndex [] _ = return ()
-storeTermsIndex (x:xs) fp = do
-    appendFile fp $ T.unpack (fst x) ++ "-" ++ indexToString (snd x) ++ "\n"
+storeTermsIndex ((x, y):xs) fp = do
+    appendFile fp $ T.unpack x ++ "-" ++ indexToString y ++ "\n"
     storeTermsIndex xs fp
     where
-        indexToString :: [Int] -> String
-        indexToString [d] = show d
-        indexToString (d:dr) = show d ++ ";" ++ indexToString dr 
+        indexToString :: [(Int, Int)] -> String
+        indexToString [(d, dy)] = show d ++ "," ++ show dy
+        indexToString ((d, dy):dr) = show d ++ "," ++ show dy ++ ";" ++ indexToString dr 
 
 -- | Store DocsIndex map into file
 storeDocsIndex :: [(Int, (T.Text, Int))] -> FilePath -> IO ()
