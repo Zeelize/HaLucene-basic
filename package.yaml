@@ -26,6 +26,7 @@ dependencies:
 - list-extras
 - hspec
 - text
+- directory
 
 library:
   source-dirs: src
