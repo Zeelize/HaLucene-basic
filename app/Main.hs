@@ -41,11 +41,13 @@ communicator :: IO ()
 communicator = do
     putStrLn "\nSearch: "
     query <- getLine
+    putStrLn "Number of documents: "
+    num <- getLine
     case query == ":quit" of
         True -> putStrLn "Thank you for using Home-depot search engine."
         _ -> do
             -- search query
-            putStrLn . show . unsafePerformIO $ findRelevantDocs 5 query "app/terms.pidx" "app/docs.pidx"
+            putStrLn . show . unsafePerformIO $ findRelevantDocs (read num) query "app/terms.pidx" "app/docs.pidx"
             -- run communicator again
             communicator
 
