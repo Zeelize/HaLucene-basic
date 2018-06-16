@@ -39,15 +39,16 @@ main = do
 -- Communicator with user
 communicator :: IO ()
 communicator = do
-    putStrLn "\nSearch: "
+    putStrLn "\nSearch:"
     query <- getLine
-    putStrLn "Number of documents: "
-    num <- getLine
+    -- HINT!: here we can put our spelling corrector 
     case query == ":quit" of
         True -> putStrLn "Thank you for using Home-depot search engine."
         _ -> do
+            putStrLn "Number of products:"
+            num <- getLine
             -- search query
-            putStrLn . show . unsafePerformIO $ findRelevantDocs (read num) query "app/terms.pidx" "app/docs.pidx"
+            sp <- showRelProducts (unsafePerformIO $ findRelevantDocs (read num) query "app/terms.pidx" "app/docs.pidx") 1
             -- run communicator again
             communicator
 
@@ -72,3 +73,10 @@ loadCSVFile fp = saveProduct lines []
                 title = head split
                 desc = head . tail $ split
                 np = p ++ [(title, desc)]
+
+-- Write most relevant products in order to console
+showRelProducts :: [(Double, T.Text)] -> Int -> IO ()
+showRelProducts [] _ = return ()
+showRelProducts ((_, title):xs) i = do
+    putStrLn $ show i ++ ". " ++ T.unpack title
+    showRelProducts xs (i + 1)
