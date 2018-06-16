@@ -59,7 +59,8 @@ procDocuments [] ti di _ = (ti, di)
 procDocuments (x:xs) ti di i = procDocuments xs nti nid (i + 1)
     where 
         analX = SA.analyze (snd x)
-        nid = addDoc i (fst x) (length . T.words $ analX) di
+        docTitle = SA.erasePunc $ fst x
+        nid = addDoc i docTitle (length . T.words $ analX) di
         nti = addTerms i ti analX
 
 -- | Add document to docMap
