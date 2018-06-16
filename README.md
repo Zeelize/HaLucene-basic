@@ -34,11 +34,12 @@ Both parts and their parts are specified in __Tasks__ section.
     * Use of IndexWriter
     * Return *X* the most relevant products for user query.
 
-## Pros
+## Usage
 
-* Possible future work and extending of HaLucene library
-* Information retrieval problem is not yet really done and implemented in Haskell
-* After extending of library more, possible upload to Hackage 
+* For buiding HaLucene run: `stack build`
+* For running tests: `stack test`
+* For running example for Home-depot products run: `stack exec halucene`
+* For documentation run: `stack haddock`
 
 ## License
 
